@@ -1,10 +1,12 @@
 <h1>Home</h1>
 
 <h2>Welcome <%= current_user.full_name %></h2>
-<p>Current token expires at <%= current_user.oauth_expires_at.strftime('%b %d %I:%M:%S%P') %></p>
-<% if current_user.image_url.present? %>
-<%= image_tag current_user.image_url, width: '100px' %>
+<% if current_user.oauth_credentials_good? %>
+<p>OAuth Token valid.  Expires at <%= current_user.oauth_expires_at.strftime('%b %d %I:%M:%S%P') %></p>
+<% else %>
+<p>No token</p>
 <% end %>
+<%= image_tag current_user.image_url, width: '100px' %>
 <%= button_to 'Sign Out', destroy_user_session_path, method: :delete %>
 
 <% console %>

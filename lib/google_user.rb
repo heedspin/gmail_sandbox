@@ -21,7 +21,7 @@ module GoogleUser
   end
 
   def oauth_clear!
-    self.oauth_access_token = self.oauth_refresh_token = self.oauth_expires_at = nil
+    self.oauth_access_token = self.oauth_expires_at = nil
     self.save!
   end
 
