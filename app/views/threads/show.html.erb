@@ -1,0 +1,5 @@
+
+<%#= @thread.inspect %>
+<%= sanitize @thread.messages.first.payload.parts.select { |p| p.mime_type == 'text/html' }.first.body.data %>
+
+<% console %>

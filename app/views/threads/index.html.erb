@@ -1,0 +1,13 @@
+<h1>Threads</h1>
+
+<table>
+	<tbody>
+<% @threads_container.threads.each do |thread| %>
+		<tr>
+			<td><%= link_to thread.snippet, thread_url(thread.id) %></td>
+		</tr>
+<% end %>
+	</tbody>
+</table>
+
+<% console %>
