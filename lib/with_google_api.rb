@@ -1,61 +1,17 @@
-require 'net/http'
-require 'json'
-
 module WithGoogleApi
-  GOOGLE_OAUTH_TOKEN_URL = 'https://oauth2.googleapis.com/token'
-
   def with_google_api(user, &block)
     if user.oauth_expires_at < Time.now.to_datetime
-      self.refresh_oauth_token(user)
+      user.refresh_oauth_token!
     end
     begin
       yield
     rescue Google::Apis::AuthorizationError => e
       log "AuthorizationError", e
-      self.refresh_oauth_token(user)
+      user.refresh_oauth_token!
       yield
     rescue
       raise $!
     end
-  end
-
-  def refresh_oauth_token(user)
-    uri = URI(GOOGLE_OAUTH_TOKEN_URL)
-    http = Net::HTTP.new(uri.host, uri.port)
-    http.use_ssl = true
-
-    request = Net::HTTP::Post.new(uri)
-    request['Content-Type'] = 'application/x-www-form-urlencoded'
-
-    request.body = URI.encode_www_form({
-      client_id: AppConfig.google_client_id,
-      client_secret: AppConfig.google_client_secret,
-      refresh_token: user.oauth_refresh_token,
-      grant_type: 'refresh_token'
-    })
-
-    response = http.request(request)
-    case response
-    when Net::HTTPSuccess
-      result = JSON.parse(response.body)
-      log 'refresh_oauth_token response', result
-      if access_token = result['access_token'] 
-        user.oauth_access_token = access_token
-        if expires_in = result['expires_in']
-          user.oauth_expires_at = Time.now.advance(seconds: expires_in.to_i)
-        end
-        if refresh_token = result['refresh_token']
-          user.oauth_refresh_token = refresh_token
-        end
-        if user.changed?
-          log "Refreshed oauth token: access token: #{user.oauth_access_token_changed? ? 'updated' : 'unchanged'}, refresh token: #{user.oauth_refresh_token_changed? ? 'updated' : 'unchanged'}, expires in #{expires_in} seconds"
-          user.save! 
-        end
-      end
-    else
-      raise "Failed to refresh token: #{response.code} - #{response.body}"
-    end
-    true
   end
 end
 

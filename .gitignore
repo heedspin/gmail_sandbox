@@ -35,3 +35,5 @@
 /config/master.key
 
 /config/app_config/local_config.*
+
+.DS_Store
