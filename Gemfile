@@ -39,6 +39,8 @@ gem 'omniauth-google-oauth2'
 gem 'devise'
 gem 'annotate'
 
+gem 'ruby-openai', '~>7.3'
+
 if File.exist?('../lib/plutolib')
   gem 'plutolib', :path => '../lib/plutolib'
 else
