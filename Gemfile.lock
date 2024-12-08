@@ -119,13 +119,17 @@ GEM
       railties (>= 4.1.0)
       responders
       warden (~> 1.2.3)
+    diff-lcs (1.5.1)
     drb (2.2.1)
     error_highlight (0.6.0)
     erubi (1.13.0)
+    event_stream_parser (1.0.0)
     faraday (2.12.1)
       faraday-net_http (>= 2.0, < 3.5)
       json
       logger
+    faraday-multipart (1.0.4)
+      multipart-post (~> 2)
     faraday-net_http (3.4.0)
       net-http (>= 0.5.0)
     globalid (1.2.1)
@@ -187,6 +191,7 @@ GEM
     multi_json (1.15.0)
     multi_xml (0.7.1)
       bigdecimal (~> 3.1)
+    multipart-post (2.4.1)
     mutex_m (0.3.0)
     net-http (0.5.0)
       uri
@@ -302,6 +307,23 @@ GEM
       railties (>= 5.2)
     retriable (3.1.2)
     rexml (3.3.9)
+    rspec-core (3.13.2)
+      rspec-support (~> 3.13.0)
+    rspec-expectations (3.13.3)
+      diff-lcs (>= 1.2.0, < 2.0)
+      rspec-support (~> 3.13.0)
+    rspec-mocks (3.13.2)
+      diff-lcs (>= 1.2.0, < 2.0)
+      rspec-support (~> 3.13.0)
+    rspec-rails (7.1.0)
+      actionpack (>= 7.0)
+      activesupport (>= 7.0)
+      railties (>= 7.0)
+      rspec-core (~> 3.13)
+      rspec-expectations (~> 3.13)
+      rspec-mocks (~> 3.13)
+      rspec-support (~> 3.13)
+    rspec-support (3.13.2)
     rubocop (1.68.0)
       json (~> 2.3)
       language_server-protocol (>= 3.17.0)
@@ -330,6 +352,10 @@ GEM
       rubocop-minitest
       rubocop-performance
       rubocop-rails
+    ruby-openai (7.3.1)
+      event_stream_parser (>= 0.3.0, < 2.0.0)
+      faraday (>= 1)
+      faraday-multipart (>= 1)
     ruby-progressbar (1.13.0)
     rubyzip (2.3.2)
     securerandom (0.3.2)
@@ -428,7 +454,9 @@ DEPENDENCIES
   plutolib!
   puma (>= 5.0)
   rails (~> 7.2.2)
+  rspec-rails
   rubocop-rails-omakase
+  ruby-openai (~> 7.3)
   selenium-webdriver
   sprockets-rails
   sqlite3 (>= 1.4)
