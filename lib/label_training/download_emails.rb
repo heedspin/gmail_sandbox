@@ -101,16 +101,16 @@ class LabelTraining::DownloadEmails
 
   # rails r "LabelTraining::DownloadEmails.new(User.first).marshal_thread('1932b8cce68fa8b0', 'spec/parse_gmail/nested_email.marshal')"
   def marshal_thread(thread_id, sub_path)
-    log "Debugging thread #{thread_id}"
-    result = nil
+    log "Marshalling thread #{thread_id}"
+    thread = nil
     with_google_api(@user) do
-      result = @gmail.get_user_thread('me', thread_id)
+      thread = @gmail.get_user_thread('me', thread_id)
     end
     destination_file_path = Rails.root.join(sub_path)
     File.open(destination_file_path, 'wb') do |file|
-      Marshal.dump(destination_file_path, file)
+      Marshal.dump(thread, file)
     end
-    log "Wrote thread to #{destination_file_path}"
+    log "Marshalled thread to #{destination_file_path}"
     true
   end
 
