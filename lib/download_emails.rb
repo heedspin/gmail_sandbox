@@ -1,5 +1,5 @@
-# LabelTraining::DownloadEmails.new(User.first).run('1OWL24', limit: 100)
-class LabelTraining::DownloadEmails
+# DownloadEmails.new(User.first).run('1OWL24', limit: 500)
+class DownloadEmails
   include Plutolib::LoggerUtils
   include WithGoogleApi
   def initialize(user)
