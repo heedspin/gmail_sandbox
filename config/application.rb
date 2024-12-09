@@ -25,8 +25,6 @@ module GmailSandbox
     #
     # config.time_zone = "Central Time (US & Canada)"
     # config.eager_load_paths << Rails.root.join("extras")
-
-    config.web_console.whitelisted_ips = '75.7.143.57'
   end
 end
 
