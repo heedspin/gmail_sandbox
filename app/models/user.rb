@@ -27,7 +27,6 @@
 class User < ApplicationRecord
   include Plutolib::LoggerUtils
   include GoogleUser
-  include WithGoogleApi
   devise :trackable, :database_authenticatable, :registerable, :omniauthable, omniauth_providers: %i[google_oauth2]
 
   def full_name

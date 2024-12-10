@@ -18,6 +18,7 @@ class LabelTraining::IdentifyLoanNumber
     true
   end
 
+  # rails r "LabelTraining::IdentifyLoanNumber.new.analyze_email(email_id: 'file-Fritgp1ih1tvXBhs6e5Z1J' assistant_id: 'asst_sF4Xf2tF3mQdMVpXCRaub3hZ', loans_id: 'file-R52ANiCe5YJ1VMnKptGhKL')"
   # rails r "LabelTraining::IdentifyLoanNumber.new.analyze_email(prompt: 'Please analyze the email subject.', assistant_id: 'asst_sF4Xf2tF3mQdMVpXCRaub3hZ', loans_id: 'file-R52ANiCe5YJ1VMnKptGhKL', email_id: 'file-FQLs19snudcXQNSHnb5xWV')"
   def analyze_email(prompt:, assistant_id:, loans_id:, email_id:)
     thread = OpenStruct.new @client.threads.create
@@ -99,6 +100,9 @@ If you are not sure, return 'unknown'.
     true
   end
 
+
+  # rails r "LabelTraining::IdentifyLoanNumber.new.upload_file('1owl24-thtm-7017-candlewood-dr-fayetteville-nc-28314/19277b49477ad3c5-fwd-fw-message-from-rnp58387933d42d.html')"
+  # rails r "LabelTraining::IdentifyLoanNumber.new.upload_file('1owl24-thtm-7017-candlewood-dr-fayetteville-nc-28314/1925f8d16ca62e9e-loan-proposal-7017-candlewood-dr-fayetteville-nc-28314.html')"
   # rails r "LabelTraining::IdentifyLoanNumber.new.upload_file('1owl24-slo-826-s-5th-st-smithfield-nc-27577/1932b8cce68fa8b0-re-slo-broker.html')"
   def upload_file(sub_path)
     path_to_thread = File.join('/var/www/gmail_sandbox/storage/emails', sub_path)

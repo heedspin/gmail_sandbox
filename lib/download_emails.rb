@@ -1,12 +1,10 @@
 # DownloadEmails.new(User.first).run('1OWL24', limit: 500)
 class DownloadEmails
   include Plutolib::LoggerUtils
-  include WithGoogleApi
   def initialize(user)
     log_to_stdout
     @user = user
-    @gmail = Google::Apis::GmailV1::GmailService.new
-    @gmail.authorization = @user.oauth_access_token
+    GmailServiceWrapper.create(@user)
     @labels_cache = {}
   end
 
@@ -30,15 +28,14 @@ class DownloadEmails
       end
 
       result = nil
-      with_google_api(@user) do
+      GmailServiceWrapper.instance.use do |gmail|
         #list_user_threads(user_id, include_spam_trash: nil, label_ids: nil, max_results: nil, page_token: nil, q: nil, fields: nil, quota_user: nil, user_ip: nil, options: nil) {|result, err| ... } ⇒ Google::Apis::GmailV1::ListThreadsResponse
         page_token = nil
         begin
-          result = @gmail.list_user_threads('me', label_ids: [label.id], max_results: 10, page_token: page_token)
+          result = gmail.list_user_threads('me', label_ids: [label.id], max_results: 10, page_token: page_token)
           result.threads.each do |thread_snippet|
             log "Downloading thread #{thread_snippet.id}"
-            gmail_thread = @gmail.get_user_thread('me', thread_snippet.id)
-            thread_parser = GmailThreadParser.new(gmail_thread)
+            thread_parser = GmailThreadParser.new(gmail_thread_id: thread_snippet.id)
             self.save_thread(label, thread_parser)
             download_count += 1
             if (limit and (download_count >= limit))
@@ -68,17 +65,19 @@ class DownloadEmails
     destination_file_path = File.join(destination_folder, destination_filename) + '.html'
     File.open(destination_file_path, 'w') do |file|
       file.puts '========================================================'
-      thread_parser.messages.each do |message|
+      thread_parser.each_message do |message_wrapper|
         # message_buffer.label_names(@labels_cache).each do |label_name|
         #   file.puts "Label: #{utf8_encode label_name}"
         # end
         file.puts("<div class=\"header\">")
         file.puts("<span>Gmail Thread ID</span><span>#{thread_parser.gmail_thread.id}</span>")
-        message.headers.each do |header|
+        message_wrapper.headers.each do |header|
           file.puts("<span>#{header.name}:</span> <span>#{utf8_encode header.value}</span>")
         end
         file.puts("</div>")
-        file.puts(utf8_encode message.content || 'empty message, wut...')
+        message.each_content do |mime_type, content|
+          file.puts(utf8_encode content || 'empty message, wut...')
+        end
       end
     end
     log "Wrote #{destination_file_path}"

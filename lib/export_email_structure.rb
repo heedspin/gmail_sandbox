@@ -1,12 +1,10 @@
 # ExportEmailStructure.new(User.first).run('1OWL24/SLO - 826 S 5th St, Smithfield, NC 27577', limit: 100)
 class ExportEmailStructure
   include Plutolib::LoggerUtils
-  include WithGoogleApi
   def initialize(user)
     log_to_stdout
     @user = user
-    @gmail = Google::Apis::GmailV1::GmailService.new
-    @gmail.authorization = @user.oauth_access_token
+    GmailServiceWrapper.create(@user)
     @labels_cache = {}
     @destination_file_path = Rails.root.join('log/email_structure.txt')
   end
@@ -24,14 +22,16 @@ class ExportEmailStructure
       file.puts "Label: #{label_name}"
     end
     result = nil
-    with_google_api(@user) do
+    GmailServiceWrapper.use do |gmail|
       page_token = nil
       begin
-        result = @gmail.list_user_threads('me', label_ids: [label.id], max_results: 10, page_token: page_token)
+        result = gmail.list_user_threads('me', label_ids: [label.id], max_results: 10, page_token: page_token)
         result.threads.each do |gmail_thread_snippet|
-          gmail_thread = @gmail.get_user_thread('me', gmail_thread_snippet.id)          
+          gmail_thread = gmail.get_user_thread('me', gmail_thread_snippet.id)          
           subject = gmail_thread.messages.first.payload.headers.find { |h| h.name == 'Subject' }
-          self.write_structure("============================================\n", "Subject: #{subject.try(:value) || 'unknown'}")
+          self.write_structure("============================================")
+          self.write_structure("Subject: #{subject.try(:value) || 'unknown'}")
+          self.write_structure("Thread ID: #{gmail_thread.id}")
           self.parse_thread_structure(gmail_thread)
           download_count += 1
           if (limit and (download_count >= limit))
@@ -45,7 +45,7 @@ class ExportEmailStructure
     true
   end
 
-  def write_structure(thing1, thing2)
+  def write_structure(thing1, thing2=nil)
     File.open(@destination_file_path, 'a') do |file|
       file.puts "#{thing1}#{thing2}"
     end
