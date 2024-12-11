@@ -1,11 +1,11 @@
-class GmailServiceWrapper
+class Gm::Service
 	include Plutolib::LoggerUtils
 	def self.create(user)
-		@instance = GmailServiceWrapper.new(user)
+		@instance = Gm::Service.new(user)
 	end
 	def self.ensure(user)
 		if @instance.nil?
-			@instance = GmailServiceWrapper.new(user)
+			@instance = Gm::Service.new(user)
 		end
 	end
 	def self.instance

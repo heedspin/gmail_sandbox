@@ -18,10 +18,10 @@ require 'rails_helper'
 # --image/png
 # --image/png
 
-RSpec.describe GmailThreadParser, type: :lib do
+RSpec.describe Gm::ThreadParser, type: :lib do
   it 'Parses nested messages' do 
-    # rails r "GmailThreadParser.new.marshal_thread(User.first, '1932b8cce68fa8b0', 'spec/data/nested_email.marshal')"
-    gtp = GmailThreadParser.from_file('spec/data/nested_email.marshal')
+    # rails r "Gm::ThreadParser.new.marshal_thread(User.first, '1932b8cce68fa8b0', 'spec/data/nested_email.marshal')"
+    gtp = Gm::ThreadParser.from_file('spec/data/nested_email.marshal')
     expect(gtp.gmail_thread).to be_truthy
     expect(gtp.messages.size).to eq(2)
     # First message:
@@ -63,8 +63,8 @@ RSpec.describe GmailThreadParser, type: :lib do
   # --image/jpeg
   # --image/jpeg
   it 'Parses multipart/mixed' do
-    # rails r "GmailThreadParser.new.marshal_thread(User.first, '1935045dc89a2083', 'spec/data/multipart_example.marshal')"
-    gtp = GmailThreadParser.from_file('spec/data/multipart_example.marshal')
+    # rails r "Gm::ThreadParser.new.marshal_thread(User.first, '1935045dc89a2083', 'spec/data/multipart_example.marshal')"
+    gtp = Gm::ThreadParser.from_file('spec/data/multipart_example.marshal')
     expect(gtp.gmail_thread).to be_truthy
     expect(gtp.messages.size).to eq(2)
     data = gtp.messages[0].text_data
@@ -76,7 +76,7 @@ RSpec.describe GmailThreadParser, type: :lib do
     expect(data.first.include?('My apologies.')).to be_truthy
   end
   it 'Can extract HTML from multipart/alternative' do
-    gtp = GmailThreadParser.from_file('spec/data/multipart_example.marshal')
+    gtp = Gm::ThreadParser.from_file('spec/data/multipart_example.marshal')
     expect(gtp.gmail_thread).to be_truthy
     expect(gtp.messages.size).to eq(2)
     data = gtp.messages[0].serialize_data(mime_type: 'text/html')

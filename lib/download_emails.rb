@@ -4,7 +4,7 @@ class DownloadEmails
   def initialize(user)
     log_to_stdout
     @user = user
-    GmailServiceWrapper.create(@user)
+    Gm::Service.create(@user)
     @labels_cache = {}
   end
 
@@ -28,14 +28,14 @@ class DownloadEmails
       # end
 
       result = nil
-      GmailServiceWrapper.instance.use do |gmail|
+      Gm::Service.instance.use do |gmail|
         #list_user_threads(user_id, include_spam_trash: nil, label_ids: nil, max_results: nil, page_token: nil, q: nil, fields: nil, quota_user: nil, user_ip: nil, options: nil) {|result, err| ... } ⇒ Google::Apis::GmailV1::ListThreadsResponse
         page_token = nil
         begin
           result = gmail.list_user_threads('me', label_ids: [label.id], max_results: 10, page_token: page_token)
           result.threads.each do |thread_snippet|
             log "Downloading thread #{thread_snippet.id}"
-            thread_parser = GmailThreadParser.new(gmail_thread_id: thread_snippet.id)
+            thread_parser = Gm::ThreadParser.new(gmail_thread_id: thread_snippet.id)
             self.save_thread(label, thread_parser)
             download_count += 1
             if (limit and (download_count >= limit))
@@ -88,7 +88,8 @@ class DownloadEmails
     destination_file_path = File.join(destination_folder, destination_filename) + '.txt'
     File.open(destination_file_path, 'w') do |file|
       file.puts '========================================================'
-      file.puts("Gmail Message ID: #{message_wrapper.gmail_message.id}")
+      file.puts("Gmail ID: #{message_wrapper.gmail_message.id}")
+      file.puts("Gmail Message-ID: #{message_wrapper.message_id}")
       message_wrapper.headers.each do |header|
         file.puts("#{header.name}: #{utf8_encode header.value}")
       end

@@ -4,7 +4,7 @@ class ExportEmailStructure
   def initialize(user)
     log_to_stdout
     @user = user
-    GmailServiceWrapper.create(@user)
+    Gm::Service.create(@user)
     @labels_cache = {}
     @destination_file_path = Rails.root.join('log/email_structure.txt')
   end
@@ -22,7 +22,7 @@ class ExportEmailStructure
       file.puts "Label: #{label_name}"
     end
     result = nil
-    GmailServiceWrapper.use do |gmail|
+    Gm::Service.use do |gmail|
       page_token = nil
       begin
         result = gmail.list_user_threads('me', label_ids: [label.id], max_results: 10, page_token: page_token)

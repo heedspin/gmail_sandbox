@@ -3,7 +3,7 @@ class GmailLabels
 
   def initialize(current_user)
     @current_user = current_user
-    GmailServiceWrapper.ensure(@current_user)
+    Gm::Service.ensure(@current_user)
   end
 
   def user_label_names(that_start_with)
@@ -12,7 +12,7 @@ class GmailLabels
 
   def user_labels(that_start_with)
     result = nil
-    GmailServiceWrapper.use do |gmail|
+    Gm::Service.use do |gmail|
       result = gmail.list_user_labels('me')
     end
     # result.labels => [ Google::Apis::GmailV1::Label... ]
