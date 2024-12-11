@@ -103,7 +103,7 @@ If you are not sure, return 'unknown'.
 
   # rails r "LabelTraining::IdentifyLoanNumber.new.upload_file('1owl24-thtm-7017-candlewood-dr-fayetteville-nc-28314/19277b49477ad3c5-fwd-fw-message-from-rnp58387933d42d.html')"
   # rails r "LabelTraining::IdentifyLoanNumber.new.upload_file('1owl24-thtm-7017-candlewood-dr-fayetteville-nc-28314/1925f8d16ca62e9e-loan-proposal-7017-candlewood-dr-fayetteville-nc-28314.html')"
-  # rails r "LabelTraining::IdentifyLoanNumber.new.upload_file('1owl24-slo-826-s-5th-st-smithfield-nc-27577/1932b8cce68fa8b0-re-slo-broker.html')"
+  # rails r "LabelTraining::IdentifyLoanNumber.new.upload_file('1owl24-slo-826-s-5th-st-smithfield-nc-27577/1932b8cce68fa8b0-re-slo-broker.txt')"
   def upload_file(sub_path)
     path_to_thread = File.join('/var/www/gmail_sandbox/storage/emails', sub_path)
     email = OpenStruct.new @client.files.upload(parameters: { file: path_to_thread, purpose: "assistants" })
