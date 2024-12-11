@@ -63,6 +63,10 @@ class GmailThreadParser
     def subject
       @gmail_message.payload.headers.find { |h| h.name == 'Subject' }.try(:value)
     end
+
+    def received_time
+      Time.at(self.gmail_message.internal_date / 1000.0)
+    end
     
     def text_data(html_to_text: true)
       @text_data ||= self.serialize_data(mime_type: 'text/plain', html_to_text: html_to_text)

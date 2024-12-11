@@ -62,26 +62,41 @@ class DownloadEmails
   def save_thread(label, thread_parser)
     destination_folder = self.ensure_subfolder(label.name.parameterize)
     destination_filename = "#{thread_parser.gmail_thread.id} #{thread_parser.subject}".parameterize
-    destination_file_path = File.join(destination_folder, destination_filename) + '.html'
+    destination_file_path = File.join(destination_folder, destination_filename) + '.txt'
     File.open(destination_file_path, 'w') do |file|
       file.puts '========================================================'
+      file.puts("Gmail Thread ID: #{thread_parser.gmail_thread.id}")
       thread_parser.each_message do |message_wrapper|
-        # message_buffer.label_names(@labels_cache).each do |label_name|
-        #   file.puts "Label: #{utf8_encode label_name}"
-        # end
-        file.puts("<div class=\"header\">")
-        file.puts("<span>Gmail Thread ID</span><span>#{thread_parser.gmail_thread.id}</span>")
+        self.save_message(destination_folder, message_wrapper)
+        file.puts '========================================================'
+        file.puts("Gmail Message ID: #{message_wrapper.gmail_message.id}")
         message_wrapper.headers.each do |header|
-          file.puts("<span>#{header.name}:</span> <span>#{utf8_encode header.value}</span>")
+          file.puts("#{header.name}: #{utf8_encode header.value}")
         end
-        file.puts("</div>")
-        message.each_content do |mime_type, content|
-          file.puts(utf8_encode content || 'empty message, wut...')
+        message_wrapper.each_data(mime_type: 'text/plain', html_to_text: true) do |data, payload|
+          file.puts(utf8_encode data || 'empty message, wut...')
         end
       end
     end
     log "Wrote #{destination_file_path}"
     true
+  end
+
+  def save_message(thread_folder, message_wrapper)
+    destination_folder = self.ensure_subfolder(thread_folder, message_wrapper.subject.parameterize)
+    destination_filename = "#{message_wrapper.received_time} #{message_wrapper.gmail_message.id}"
+    destination_file_path = File.join(destination_folder, destination_filename) + '.txt'
+    File.open(destination_file_path, 'w') do |file|
+      file.puts '========================================================'
+      file.puts("Gmail Message ID: #{message_wrapper.gmail_message.id}")
+      message_wrapper.headers.each do |header|
+        file.puts("#{header.name}: #{utf8_encode header.value}")
+      end
+      message_wrapper.each_data(mime_type: 'text/plain', html_to_text: true) do |data, payload|
+        file.puts(utf8_encode data || 'empty message, wut...')
+      end
+    end
+    log "Wrote #{destination_file_path}"    
   end
 
   def ensure_subfolder(*parts)
