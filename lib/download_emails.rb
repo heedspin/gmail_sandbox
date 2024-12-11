@@ -20,12 +20,12 @@ class DownloadEmails
       @labels_cache[label.id] = label
     end
     labels.each do |label|
-      next if label.name == labels_that_start_with # Skip top level
-      parts = label.name.split('/')
-      if parts.size != 2
-        log_error "Skipping unexpected label: #{label.name}"
-        next
-      end
+      # next if label.name == labels_that_start_with # Skip top level
+      # parts = label.name.split('/')
+      # if parts.size != 2
+      #   log_error "Skipping unexpected label: #{label.name}"
+      #   next
+      # end
 
       result = nil
       GmailServiceWrapper.instance.use do |gmail|
