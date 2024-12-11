@@ -109,10 +109,14 @@ class GmailThreadParser
         payload.parts.each do |pp|
           self.parse_message(pp, mime_type: mime_type, html_to_text: html_to_text, &block)
         end
-      elsif ['text/plain', 'text/html'].include?(payload.mime_type)
+      elsif 'text/plain' == payload.mime_type
         if mime_type.nil? or (mime_type == 'text/plain')
           block.yield(payload.body.data, payload)
-        elsif (mime_type == 'text/html') and html_to_text
+        end
+      elsif 'text/html' == payload.mime_type
+        if mime_type.nil? or (mime_type == 'text/html')
+          block.yield(payload.body.data, payload)
+        elsif (mime_type == 'text/plain') and html_to_text
           block.yield(Nokogiri::HTML(payload.body.data).text, payload)
         end
       elsif payload.parts
