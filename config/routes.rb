@@ -21,6 +21,9 @@ Rails.application.routes.draw do
 
   resources :labels, only: [:index]
   resources :threads
+  namespace :gm do
+    resources :message_actions, only: [:index]
+  end
 
   root 'home#index'
   

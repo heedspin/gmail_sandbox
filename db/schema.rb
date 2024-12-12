@@ -10,7 +10,20 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2024_11_25_192110) do
+ActiveRecord::Schema[7.2].define(version: 2024_12_11_185632) do
+  create_table "gm_message_snippets", force: :cascade do |t|
+    t.integer "user_id"
+    t.string "history_id"
+    t.string "gmail_id"
+    t.datetime "internal_date"
+    t.string "label_ids"
+    t.string "snippet"
+    t.string "last_changes"
+    t.string "last_bot_action"
+    t.index ["gmail_id"], name: "index_gm_message_snippets_on_gmail_id", unique: true
+    t.index ["internal_date"], name: "index_gm_message_snippets_on_internal_date"
+  end
+
   create_table "users", force: :cascade do |t|
     t.string "first_name"
     t.string "last_name"

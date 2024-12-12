@@ -1,0 +1,14 @@
+<h1>Message Actions</h1>
+
+<table>
+	<tbody>
+	<% @message_actions.each do |message_action| %>
+		<tr>
+			<td><%= message_action.actions %></td>
+			<td><%= message_action.snippet %></td>
+		</tr>
+	<% end %>
+	</tbody>
+</table>
+
+<% console %>
